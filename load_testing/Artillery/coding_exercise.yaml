@@ -1,0 +1,37 @@
+---
+config:
+  target: https://1kyg8luaxd.execute-api.us-east-2.amazonaws.com
+  payload:
+    path: dicom_files.csv
+    fields:
+      - dcmfile
+    order: sequence
+    skipHeader: true
+  phases:
+    - duration: 10
+      arrivalRate: 1
+      rampTo: 3
+      name: Warm up phase
+    - duration: 10
+      arrivalRate: 3
+      rampTo: 5
+      name: Ramp up phase
+    - duration: 10
+      arrivalRate: 5
+      rampTo: 7
+      name: Peak phase
+  plugins:
+    #ensure: {}
+    #apdex: {}
+    metrics-by-endpoint: {}
+  #apdex:
+  #  threshold: 100
+  #ensure:
+  #  thresholds:
+  #    - http.response_time.p99: 100
+  #    - http.response_time.p95: 75
+scenarios:
+  - name: Test1
+    flow:
+      - get:
+          url: /deploy/adrian-coding-exercise?bucket=myincomingmri&key={{dcmfile}}
